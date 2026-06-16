@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" fill="none" role="img" aria-label="SliceHRMS">
+  <rect width="180" height="180" rx="40" fill="url(#slicehrms-grad)"/>
+  <path
+    d="M90 48c-15.8 0-28.1 9-31.1 22.5-3.4-1.7-7.3-2.8-11.2-2.8-12.4 0-22.5 10.1-22.5 23.6 0 11.8 8.4 21.5 19.7 23.7 4.5 15.8 19.1 27 36.6 27 12.9 0 24.3-6.2 31-15.8 12.4-2.3 21.5-13 21.5-26 0-14.7-11.8-26.6-27.1-26.6-2.8 0-5.6.6-7.9 1.1C113.6 57.9 104.9 48 90 48Z"
+    stroke="#fff"
+    stroke-width="7.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M70.3 81.8c6.8 7.9 12.4 11.8 19.7 11.8s12.9-3.9 19.7-11.8M72.3 104.3c5.1 5.6 10.1 8.4 16.9 8.4s11.8-2.8 16.9-8.4"
+    stroke="#fff"
+    stroke-width="6.5"
+    stroke-linecap="round"
+    opacity=".92"
+  />
+  <circle cx="74.4" cy="72" r="4.8" fill="#fff"/>
+  <circle cx="105.6" cy="72" r="4.8" fill="#fff"/>
+  <defs>
+    <linearGradient id="slicehrms-grad" x1="22" y1="22" x2="158" y2="158" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4aafa0"/>
+      <stop offset="1" stop-color="#24776d"/>
+    </linearGradient>
+  </defs>
+</svg>

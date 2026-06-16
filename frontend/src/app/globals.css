@@ -1,0 +1,427 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+    color-scheme: dark;
+  }
+
+  html[data-theme="light"] {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% -20%, rgba(47, 148, 135, 0.18), transparent),
+      radial-gradient(ellipse 50% 40% at 100% 0%, rgba(59, 130, 246, 0.08), transparent);
+    min-height: 100vh;
+  }
+
+  html[data-theme="light"] body {
+    @apply bg-slate-100 text-slate-900;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% -20%, rgba(47, 148, 135, 0.12), transparent),
+      radial-gradient(ellipse 50% 40% at 100% 0%, rgba(59, 130, 246, 0.06), transparent);
+  }
+
+  ::selection {
+    @apply bg-brand-500/40 text-white;
+  }
+
+  html[data-theme="light"] ::selection {
+    @apply bg-brand-500/30 text-slate-900;
+  }
+}
+
+/* Light theme overrides for shared utility classes */
+html[data-theme="light"] .glass {
+  @apply border-slate-200/90 bg-white/80 text-slate-900;
+}
+
+html[data-theme="light"] .text-white {
+  @apply text-slate-900;
+}
+
+html[data-theme="light"] .text-slate-100 {
+  @apply text-slate-800;
+}
+
+html[data-theme="light"] .text-slate-200 {
+  @apply text-slate-700;
+}
+
+html[data-theme="light"] .text-slate-400 {
+  @apply text-slate-600;
+}
+
+html[data-theme="light"] .border-white\/10,
+html[data-theme="light"] .border-white\/15 {
+  @apply border-slate-200;
+}
+
+html[data-theme="light"] .bg-slate-950,
+html[data-theme="light"] .bg-slate-950\/40,
+html[data-theme="light"] .bg-slate-950\/90 {
+  @apply bg-white/95;
+}
+
+html[data-theme="light"] .bg-white\/5,
+html[data-theme="light"] .bg-white\/\[0\.03\] {
+  @apply bg-slate-50;
+}
+
+html[data-theme="light"] .bg-slate-900 {
+  @apply bg-white;
+}
+
+html[data-theme="light"] .bg-slate-900\/60,
+html[data-theme="light"] .bg-slate-900\/40,
+html[data-theme="light"] .bg-slate-900\/30,
+html[data-theme="light"] .bg-slate-900\/50 {
+  @apply border-slate-200 bg-white;
+}
+
+html[data-theme="light"] .bg-slate-900\/60 {
+  @apply bg-slate-100;
+}
+
+html[data-theme="light"] .bg-slate-800 {
+  @apply bg-slate-200 text-slate-700;
+}
+
+html[data-theme="light"] .bg-brand-500 {
+  color: #fff;
+}
+
+html[data-theme="light"] .bg-brand-500.text-white,
+html[data-theme="light"] .bg-brand-500 .text-white {
+  color: #fff;
+}
+
+html[data-theme="light"] .bg-brand-500\/10 {
+  @apply border-brand-200 bg-brand-50;
+}
+
+html[data-theme="light"] .bg-brand-500\/15 {
+  @apply bg-brand-100;
+}
+
+html[data-theme="light"] .text-brand-100,
+html[data-theme="light"] .text-brand-200,
+html[data-theme="light"] .text-brand-200\/70,
+html[data-theme="light"] .text-brand-300\/80 {
+  @apply text-slate-800;
+}
+
+html[data-theme="light"] .text-brand-300 {
+  @apply text-brand-800;
+}
+
+html[data-theme="light"] .border-brand-500\/25,
+html[data-theme="light"] .border-brand-500\/30 {
+  @apply border-brand-300;
+}
+
+html[data-theme="light"] .bg-amber-500\/5 {
+  @apply bg-amber-50;
+}
+
+html[data-theme="light"] .border-amber-500\/20 {
+  @apply border-amber-300;
+}
+
+html[data-theme="light"] .text-amber-200,
+html[data-theme="light"] .text-amber-200\/80 {
+  color: rgb(146 64 14);
+}
+
+html[data-theme="light"] .text-amber-400 {
+  @apply text-amber-700;
+}
+
+html[data-theme="light"] .text-orange-300 {
+  @apply text-orange-800;
+}
+
+html[data-theme="light"] .bg-orange-500\/15 {
+  @apply bg-orange-100;
+}
+
+html[data-theme="light"] .text-emerald-300 {
+  @apply text-emerald-800;
+}
+
+html[data-theme="light"] .bg-emerald-500\/15 {
+  @apply bg-emerald-100;
+}
+
+html[data-theme="light"] .text-blue-300 {
+  @apply text-blue-800;
+}
+
+html[data-theme="light"] .bg-blue-500\/15 {
+  @apply bg-blue-100;
+}
+
+html[data-theme="light"] .hover\:bg-white\/5:hover {
+  @apply bg-white;
+}
+
+html[data-theme="light"] .hover\:bg-white\/10:hover {
+  @apply bg-slate-100;
+}
+
+html[data-theme="light"] .hover\:text-white:hover {
+  @apply text-slate-900;
+}
+
+html[data-theme="light"] .hover\:text-brand-200:hover {
+  @apply text-brand-700;
+}
+
+html[data-theme="light"] .text-slate-300 {
+  @apply text-slate-700;
+}
+
+html[data-theme="light"] .text-emerald-400 {
+  @apply text-emerald-700;
+}
+
+html[data-theme="light"] .text-red-300 {
+  @apply text-red-700;
+}
+
+html[data-theme="light"] .ring-orange-500\/30 {
+  @apply ring-orange-300;
+}
+
+html[data-theme="light"] .text-red-200 {
+  @apply text-red-700;
+}
+
+html[data-theme="light"] .bg-red-500\/10 {
+  @apply bg-red-50;
+}
+
+html[data-theme="light"] .border-red-500\/30 {
+  @apply border-red-400;
+}
+
+html[data-theme="light"] .hover\:bg-red-500\/20:hover {
+  @apply bg-red-100;
+}
+
+html[data-theme="light"] .text-slate-500 {
+  @apply text-slate-600;
+}
+
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+html[data-theme="light"] textarea {
+  @apply border-slate-300 bg-white text-slate-900;
+}
+
+html[data-theme="light"] .shadow-card {
+  box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.08);
+}
+
+@layer utilities {
+  .app-tab-bar {
+    @apply border-white/10 bg-slate-900/60;
+  }
+
+  html[data-theme="light"] .app-tab-bar {
+    @apply border-slate-300 bg-slate-200;
+  }
+
+  .app-tab-inactive {
+    @apply text-slate-400;
+  }
+
+  html[data-theme="light"] .app-tab-inactive {
+    @apply text-slate-700;
+  }
+
+  html[data-theme="light"] .app-tab-inactive:hover {
+    @apply bg-white text-slate-900;
+  }
+
+  .glass {
+    @apply border border-white/10 bg-white/5 backdrop-blur-xl;
+  }
+
+  .app-surface-card {
+    @apply rounded-xl border border-white/10 bg-slate-900/40 p-4;
+  }
+
+  html[data-theme="light"] .app-surface-card {
+    @apply border-slate-200 bg-white shadow-sm;
+  }
+
+  .app-help-text {
+    @apply text-xs text-brand-200/70;
+  }
+
+  html[data-theme="light"] .app-help-text {
+    @apply text-slate-800;
+  }
+
+  .app-btn-danger {
+    @apply inline-flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-2.5 text-sm font-medium text-red-200 transition hover:bg-red-500/20 disabled:opacity-50;
+  }
+
+  html[data-theme="light"] .app-btn-danger {
+    @apply border-red-500 bg-red-50 text-red-700 hover:bg-red-100;
+  }
+
+  .app-btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-200 transition hover:bg-white/5 disabled:opacity-50;
+  }
+
+  html[data-theme="light"] .app-btn-secondary {
+    @apply border-slate-300 bg-white text-slate-800 hover:bg-slate-100;
+  }
+
+  .app-archived-job-banner {
+    @apply rounded-xl border px-4 py-3 text-sm;
+    border-color: rgb(245 158 11 / 0.3);
+    background-color: rgb(245 158 11 / 0.1);
+    color: rgb(254 243 199);
+  }
+
+  .app-archived-job-banner-title {
+    @apply font-medium;
+    color: rgb(254 243 199);
+  }
+
+  .app-archived-job-banner-subtitle {
+    @apply text-xs;
+    color: rgb(253 230 138 / 0.8);
+  }
+
+  html[data-theme="light"] .app-archived-job-banner {
+    border-color: rgb(251 191 36);
+    background-color: rgb(255 251 235);
+    color: rgb(69 26 3);
+  }
+
+  html[data-theme="light"] .app-archived-job-banner-title,
+  html[data-theme="light"] .app-archived-job-banner-subtitle {
+    color: rgb(120 53 15);
+  }
+
+  .app-archived-job-btn {
+    @apply rounded-lg px-3 py-1.5 text-xs font-medium transition;
+    background-color: rgb(245 158 11 / 0.2);
+    color: rgb(254 243 199);
+  }
+
+  .app-archived-job-btn:hover {
+    background-color: rgb(245 158 11 / 0.3);
+  }
+
+  html[data-theme="light"] .app-archived-job-btn {
+    border: 1px solid rgb(245 158 11);
+    background-color: rgb(217 119 6);
+    color: rgb(255 255 255);
+  }
+
+  html[data-theme="light"] .app-archived-job-btn:hover {
+    background-color: rgb(180 83 9);
+  }
+
+  .app-search-panel {
+    @apply flex max-h-[min(480px,calc(100vh-12rem))] min-h-[280px] flex-col rounded-2xl border border-white/10 bg-slate-900/40;
+  }
+
+  html[data-theme="light"] .app-search-panel {
+    @apply border-slate-200 bg-white;
+  }
+
+  .app-search-composer {
+    border-color: rgb(255 255 255 / 0.1);
+    background-color: rgb(15 23 42 / 0.35);
+  }
+
+  html[data-theme="light"] .app-search-composer {
+    border-color: rgb(226 232 240);
+    background-color: rgb(248 250 252);
+  }
+
+  .app-search-input {
+    @apply rounded-xl bg-slate-950/60 text-white outline-none transition;
+    border: 2px solid rgb(148 163 184 / 0.35);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  }
+
+  .app-search-input::placeholder {
+    color: rgb(100 116 139);
+  }
+
+  .app-search-input:focus {
+    border-color: rgb(47 148 135);
+    box-shadow: 0 0 0 3px rgb(47 148 135 / 0.2);
+  }
+
+  html[data-theme="light"] .app-search-input {
+    background-color: rgb(255 255 255);
+    color: rgb(15 23 42);
+    border-color: rgb(148 163 184);
+  }
+
+  html[data-theme="light"] .app-search-input:focus {
+    border-color: rgb(47 148 135);
+    box-shadow: 0 0 0 3px rgb(47 148 135 / 0.15);
+  }
+
+  .app-search-submit {
+    background-color: rgb(47 148 135);
+    color: rgb(255 255 255);
+  }
+
+  .app-search-submit:hover:not(:disabled) {
+    background-color: rgb(36 119 109);
+  }
+
+  html[data-theme="light"] .app-search-submit {
+    background-color: rgb(47 148 135);
+    color: rgb(255 255 255);
+  }
+
+  .app-search-table-head {
+    @apply bg-slate-950/95;
+  }
+
+  html[data-theme="light"] .app-search-table-head {
+    background-color: rgb(241 245 249);
+    color: rgb(71 85 105);
+  }
+
+  .app-search-user-bubble {
+    background-color: rgb(47 148 135 / 0.15);
+    color: rgb(209 250 229);
+    --tw-ring-color: rgb(47 148 135 / 0.2);
+  }
+
+  html[data-theme="light"] .app-search-user-bubble {
+    background-color: rgb(209 250 229);
+    color: rgb(6 78 59);
+    --tw-ring-color: rgb(110 231 183);
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-slate-600/50;
+  }
+}

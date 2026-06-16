@@ -1,0 +1,21 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# next.js
+/.next/
+/out/
+
+# env
+.env*.local
+
+# debug
+npm-debug.log*
+
+# typescript
+next-env.d.ts
+
+# vercel
+.vercel
