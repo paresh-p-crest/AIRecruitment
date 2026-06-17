@@ -91,15 +91,16 @@ Click **Deploy**. Vercel will build and give you a URL like `https://your-app.ve
 
 FastAPI cannot run as the main app on Vercel. Options:
 
-### Option A — Render (simple)
+### Option A — Render (simple, free tier)
 
-1. [render.com](https://render.com) → **New → Web Service**
-2. Connect the same GitHub repo
-3. **Root directory**: leave empty (repo root)
-4. **Build command**: `pip install -r requirements.txt`
-5. **Start command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-6. Add env vars from `.env.example` (AWS keys, `DATABASE_URL`, etc.)
-7. Use Render’s URL as `NEXT_PUBLIC_API_URL` in Vercel → **Redeploy**
+**Full step-by-step:** see **[DEPLOY_BACKEND_RENDER.md](./DEPLOY_BACKEND_RENDER.md)**
+
+1. [render.com](https://render.com) → **New → Web Service** → connect GitHub repo
+2. **Build:** `pip install -r requirements.txt`
+3. **Start:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
+4. **Env:** `DATABASE_URL=sqlite+aiosqlite:////tmp/recruitment.db` and `USE_TEXTRACT=true` only
+5. After deploy, set **AWS Bedrock** in app **Settings → LLM Model** (not Render env)
+6. Copy Render URL → Vercel `NEXT_PUBLIC_API_URL` → redeploy frontend
 
 ### Option B — Railway / Fly.io
 

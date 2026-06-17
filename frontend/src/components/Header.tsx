@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Brain, Settings, Wifi, WifiOff } from "lucide-react";
+import { BookOpen, Brain, Settings, Wifi, WifiOff } from "lucide-react";
 import { ActiveProviderBadge } from "@/components/ActiveProviderBadge";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { LlmProvider } from "@/lib/api";
@@ -59,6 +59,19 @@ export function Header({ apiOnline, activeProvider, activeModel }: HeaderProps) 
           </div>
 
           <ThemeToggle />
+
+          <Link
+            href="/documentation"
+            className={cn(
+              "flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium whitespace-nowrap transition",
+              pathname === "/documentation" || pathname === "/documenation"
+                ? "border-brand-500/50 bg-brand-500/15 text-brand-200"
+                : "border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
+            )}
+          >
+            <BookOpen className="h-4 w-4" />
+            <span className="hidden sm:inline">Documentation</span>
+          </Link>
 
           <Link
             href="/settings"

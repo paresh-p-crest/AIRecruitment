@@ -2,6 +2,26 @@
 
 Full-stack demo for **Phase 1 (Resume Upload)** and **Phase 2 (Data Extraction)** — FastAPI backend + Next.js UI deployable to Vercel.
 
+## Live Demo
+
+| | URL |
+|---|-----|
+| **Web app (Vercel)** | https://ai-recruitment-gamma.vercel.app |
+| **Documentation** | https://ai-recruitment-gamma.vercel.app/documentation |
+| **API (Render)** | https://airecruitment.onrender.com |
+| **API health check** | https://airecruitment.onrender.com/health |
+| **API docs** | https://airecruitment.onrender.com/docs |
+
+**Vercel env var** (required for API Connected):
+
+```env
+NEXT_PUBLIC_API_URL=https://airecruitment.onrender.com
+```
+
+Set this in Vercel → **Settings → Environment Variables**, then **Redeploy**. Configure **AWS Bedrock** in the app under **Settings → LLM Model** after first load.
+
+> Free Render tier may sleep when idle — the first request after inactivity can take 30–60 seconds.
+
 ## Tech Stack
 
 | Layer | Tool |
@@ -112,7 +132,7 @@ The UI provides drag-and-drop resume upload, a candidate list, and a detailed pr
 
 1. Push the repo to GitHub
 2. Import the project in [vercel.com](https://vercel.com) — set **Root Directory** to `frontend`
-3. Add environment variable: `NEXT_PUBLIC_API_URL=https://your-api-domain.com`
+3. Add environment variable: `NEXT_PUBLIC_API_URL=https://airecruitment.onrender.com`
 4. Deploy
 
 ### Backend → Railway / Render / Fly.io
