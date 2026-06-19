@@ -149,46 +149,60 @@ def _row_to_public(
     )
 
 
-async def ensure_job_description_row(session: AsyncSession) -> JobDescription:
-    """Ensure at least one job exists and return the active posting."""
-    return await get_active_job_row(session)
-
-
-async def get_active_job_row(session: AsyncSession) -> JobDescription:
+async def find_active_job_row(session: AsyncSession) -> JobDescription | None:
+    """Return the active job posting, if one is set."""
     result = await session.execute(
         select(JobDescription)
         .where(JobDescription.is_active.is_(True))
         .order_by(JobDescription.id.desc())
     )
-    row = result.scalar_one_or_none()
-    if row:
-        return row
+    return result.scalar_one_or_none()
+
+
+async def ensure_job_description_row(session: AsyncSession) -> JobDescription:
+    """Ensure at least one job exists; prefer the active posting when set."""
+    active = await find_active_job_row(session)
+    if active:
+        return active
 
     any_result = await session.execute(
-        select(JobDescription).order_by(JobDescription.id.asc())
+        select(JobDescription).order_by(JobDescription.updated_at.desc())
     )
     row = any_result.scalar_one_or_none()
     if row:
-        row.is_active = True
-        row.updated_at = datetime.now(timezone.utc)
-        await session.flush()
         return row
 
     row = JobDescription(
         title="Untitled role",
         raw_text="",
-        is_active=True,
+        is_active=False,
     )
     session.add(row)
     await session.flush()
     return row
 
 
+async def get_active_job_row(session: AsyncSession) -> JobDescription:
+    row = await find_active_job_row(session)
+    if row:
+        return row
+    raise ValueError(
+        "No active job posting. Set a job as active on the Job Description tab before matching."
+    )
+
+
 async def get_job_description(
     session: AsyncSession, job_id: int | None = None
 ) -> JobDescriptionPublic:
     if job_id is None:
-        row = await get_active_job_row(session)
+        row = await find_active_job_row(session)
+        if not row:
+            latest = await session.execute(
+                select(JobDescription).order_by(JobDescription.updated_at.desc())
+            )
+            row = latest.scalar_one_or_none()
+        if not row:
+            raise ValueError("No job descriptions found.")
     else:
         row = await session.get(JobDescription, job_id)
         if not row:
@@ -230,9 +244,15 @@ async def update_job_description(
     payload: JobDescriptionUpdate,
     job_id: int | None = None,
 ) -> JobDescriptionPublic:
-    row = await get_active_job_row(session) if job_id is None else await session.get(
-        JobDescription, job_id
-    )
+    if job_id is None:
+        row = await find_active_job_row(session)
+        if not row:
+            latest = await session.execute(
+                select(JobDescription).order_by(JobDescription.updated_at.desc())
+            )
+            row = latest.scalar_one_or_none()
+    else:
+        row = await session.get(JobDescription, job_id)
     if not row:
         raise ValueError(f"Job description with id {job_id} not found.")
 
@@ -287,6 +307,21 @@ async def activate_job_description(
     return await get_job_description(session, row.id)
 
 
+async def deactivate_job_description(
+    session: AsyncSession, job_id: int
+) -> JobDescriptionPublic:
+    row = await session.get(JobDescription, job_id)
+    if not row:
+        raise ValueError(f"Job description with id {job_id} not found.")
+    if not row.is_active:
+        return await get_job_description(session, row.id)
+
+    row.is_active = False
+    row.updated_at = datetime.now(timezone.utc)
+    await session.flush()
+    return await get_job_description(session, row.id)
+
+
 async def delete_job_description(session: AsyncSession, job_id: int) -> dict:
     """
     Delete a job posting and its match results only.
@@ -297,7 +332,6 @@ async def delete_job_description(session: AsyncSession, job_id: int) -> dict:
     if not row:
         raise ValueError(f"Job description with id {job_id} not found.")
 
-    was_active = row.is_active
     title = row.title or derive_job_title(row.raw_text or "")
 
     delete_result = await session.execute(
@@ -318,16 +352,11 @@ async def delete_job_description(session: AsyncSession, job_id: int) -> dict:
         replacement = JobDescription(
             title="Untitled role",
             raw_text="",
-            is_active=True,
+            is_active=False,
         )
         session.add(replacement)
         await session.flush()
-        new_active_id = replacement.id
-    elif was_active:
-        survivors[0].is_active = True
-        survivors[0].updated_at = datetime.now(timezone.utc)
-        new_active_id = survivors[0].id
-        await session.flush()
+        new_active_id = None
     else:
         active = await session.execute(
             select(JobDescription).where(JobDescription.is_active.is_(True))

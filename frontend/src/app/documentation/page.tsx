@@ -52,7 +52,7 @@ export default function DocumentationPage() {
             Platform documentation
           </p>
           <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            SliceHRMS AI Recruitment Assistant
+            Easy AI Recruitment
           </h1>
           <p className="mt-3 text-sm text-slate-400">
             Live app:{" "}
@@ -87,9 +87,8 @@ export default function DocumentationPage() {
               items={[
                 "AI-powered resume extraction from PDF, DOCX, and DOC",
                 "Pre-scan duplicate detection before LLM calls (saves tokens and cost)",
-                "Configurable duplicate rules (email, phone, LinkedIn, passport)",
-                "Multi-provider LLM support: AWS Bedrock, OpenAI, Google Gemini",
-                "Settings UI for credentials, model selection, and connection testing",
+                "Configurable duplicate rules (email and phone)",
+                "AWS Bedrock LLM integration with Settings UI for credentials, model selection, and connection testing",
                 "Per-model token pricing and USD / credits cost display on uploads",
                 "Upload history with processing time, tokens, model, and estimated cost",
                 "Natural-language candidate search across the full talent pool",
@@ -107,7 +106,6 @@ export default function DocumentationPage() {
             <BulletList
               items={[
                 "LangGraph resume extraction pipeline with structured JSON output",
-                "AWS Textract for PDF text extraction (when configured)",
                 "Chunked extraction for large resumes",
                 "Identity-based duplicate detection and merge policies",
                 "Bulk and single upload with duplicate review workflow",
@@ -129,7 +127,6 @@ export default function DocumentationPage() {
                 "Surfaces best-fit candidates via natural-language search",
                 "Tracks LLM usage and estimated cost per upload",
                 "Avoids duplicate AI calls with pre-scan gates",
-                "Supports multiple LLM providers for flexibility and demos",
                 "Enables 24/7 self-serve recruitment pipeline access via web UI",
               ]}
             />
@@ -182,12 +179,11 @@ export default function DocumentationPage() {
                 <BulletList
                   items={[
                     "LangChain + LangGraph",
-                    "AWS Bedrock (Claude), OpenAI, Google Gemini",
+                    "AWS Bedrock (Claude)",
                     "Structured LLM extraction",
                     "Hybrid matching engine + LLM summaries",
                     "Natural-language candidate search",
                     "Optional LangSmith tracing",
-                    "AWS Textract (PDF)",
                   ]}
                 />
               </div>

@@ -5,6 +5,7 @@ import { Briefcase, Loader2 } from "lucide-react";
 import {
   formatJobListLabel,
   getJobDescription,
+  isJobMatchableForContext,
   listJobDescriptions,
   type JobDescriptionListItem,
 } from "@/lib/api";
@@ -16,10 +17,20 @@ interface JobContextSelectorProps {
   className?: string;
   label?: string;
   helperText?: string | null;
+  /** When true, hide empty drafts and untitled jobs that are not ready for matching. */
+  matchableOnly?: boolean;
 }
 
 const DEFAULT_HELPER =
   "Scores and Run matching use this job. Switch jobs to view preserved results.";
+
+function pickDefaultJob(
+  items: JobDescriptionListItem[],
+  matchableOnly: boolean
+): JobDescriptionListItem | undefined {
+  const pool = matchableOnly ? items.filter(isJobMatchableForContext) : items;
+  return pool.find((job) => job.is_active) ?? pool[0];
+}
 
 export function JobContextSelector({
   selectedJobId,
@@ -28,32 +39,40 @@ export function JobContextSelector({
   className,
   label = "Match against job",
   helperText = DEFAULT_HELPER,
+  matchableOnly = false,
 }: JobContextSelectorProps) {
   const [jobs, setJobs] = useState<JobDescriptionListItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const visibleJobs = matchableOnly ? jobs.filter(isJobMatchableForContext) : jobs;
 
   const loadJobs = useCallback(async () => {
     setLoading(true);
     try {
       const items = await listJobDescriptions();
       setJobs(items);
-      if (!selectedJobId) {
-        const active = items.find((job) => job.is_active) ?? items[0];
-        if (active) onJobChange(active.id, active.title);
+
+      const pool = matchableOnly ? items.filter(isJobMatchableForContext) : items;
+      const selectedVisible =
+        selectedJobId != null && pool.some((job) => job.id === selectedJobId);
+
+      if (!selectedJobId || (matchableOnly && !selectedVisible)) {
+        const fallback = pickDefaultJob(items, matchableOnly);
+        if (fallback) onJobChange(fallback.id, fallback.title);
       }
     } catch {
       setJobs([]);
     } finally {
       setLoading(false);
     }
-  }, [onJobChange, selectedJobId]);
+  }, [matchableOnly, onJobChange, selectedJobId]);
 
   useEffect(() => {
     loadJobs();
   }, [loadJobs]);
 
   const handleChange = async (jobId: number) => {
-    const job = jobs.find((item) => item.id === jobId);
+    const job = visibleJobs.find((item) => item.id === jobId);
     if (job) {
       onJobChange(job.id, job.title);
       return;
@@ -80,14 +99,24 @@ export function JobContextSelector({
             <Loader2 className="h-4 w-4 animate-spin" />
             Loading jobs…
           </div>
+        ) : visibleJobs.length === 0 ? (
+          <p className="text-sm text-slate-400">
+            {matchableOnly
+              ? "Save a job description on the Job tab to match candidates."
+              : "No job postings yet."}
+          </p>
         ) : (
           <select
-            value={selectedJobId ?? ""}
+            value={
+              selectedJobId != null && visibleJobs.some((job) => job.id === selectedJobId)
+                ? selectedJobId
+                : (visibleJobs[0]?.id ?? "")
+            }
             onChange={(e) => handleChange(Number(e.target.value))}
-            disabled={disabled || jobs.length === 0}
+            disabled={disabled}
             className="w-full rounded-lg border border-white/15 bg-slate-950 px-3 py-2 text-sm text-white"
           >
-            {jobs.map((job) => (
+            {visibleJobs.map((job) => (
               <option key={job.id} value={job.id}>
                 {formatJobListLabel(job.title, job.match_count, job.is_active)}
               </option>
@@ -95,7 +124,7 @@ export function JobContextSelector({
           </select>
         )}
       </div>
-      {selectedJobId != null && helperText && (
+      {selectedJobId != null && helperText && visibleJobs.length > 0 && (
         <p className="app-help-text sm:max-w-[260px] sm:text-right">{helperText}</p>
       )}
     </div>

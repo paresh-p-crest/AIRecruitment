@@ -56,7 +56,6 @@ type ProfileForm = {
   current_location: string;
   country: string;
   title: string;
-  passport_number: string;
 };
 
 function profileFromSources(
@@ -73,7 +72,6 @@ function profileFromSources(
     current_location: profile?.current_location ?? info.Location ?? "",
     country: profile?.country ?? "",
     title: profile?.title ?? info["Current Designation"] ?? "",
-    passport_number: profile?.passport_number ?? "",
   };
 }
 
@@ -278,7 +276,6 @@ export function CandidateDetail({
         current_location: form.current_location.trim() || null,
         country: form.country.trim() || null,
         title: form.title.trim() || null,
-        passport_number: form.passport_number.trim() || null,
       };
       const result = await updateCandidateProfile(candidateId, payload);
       const updatedResume: ResumeDetail = {
@@ -497,7 +494,6 @@ export function CandidateDetail({
           {renderField("current_location", "Location")}
           {renderField("country", "Country")}
           {renderField("title", "Title")}
-          {renderField("passport_number", "Passport (secondary)")}
         </div>
         <button
           type="button"

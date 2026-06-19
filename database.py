@@ -521,8 +521,7 @@ def _migrate_candidates_and_uploads(connection) -> None:
             sa.text(
                 "INSERT INTO duplicate_check_settings "
                 "(id, primary_fields, secondary_fields) "
-                "VALUES (1, '[\"email\", \"phone\", \"linkedin_url\"]', "
-                "'[\"passport_number\"]')"
+                "VALUES (1, '[\"email\", \"phone\"]', '[]')"
             )
         )
 

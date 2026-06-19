@@ -402,15 +402,36 @@ export default function HomePage() {
     }
   };
 
-  const handleUploadComplete = (resumes: ResumeDetail[]) => {
+  const handleUploadComplete = async (resumes: ResumeDetail[]) => {
     if (resumes.length === 0) return;
     const latest = resumes[resumes.length - 1];
-    setSelectedId(latest.id);
-    setSelectedResume(latest);
     setSelectedMatch(null);
-    refreshCandidates();
+    setSelectedProfile(null);
+    setSelectedResume(null);
+    setSelectedCandidateId(null);
+    setSelectedId(null);
     setActiveTab("candidates");
     setShowMobileDetail(true);
+
+    try {
+      const jobId = selectedJobId ?? undefined;
+      const [candidateData] = await Promise.all([
+        fetchCandidates(jobId),
+        refreshDashboard(),
+      ]);
+      setCandidates(candidateData);
+      await refreshMatchResults(jobId);
+
+      const item = candidateData.find(
+        (c) => c.resume_id === latest.id || c.id === latest.id
+      );
+      if (item) {
+        handleSelect(item);
+      }
+    } catch {
+      setSelectedResume(latest);
+      setSelectedId(latest.id);
+    }
   };
 
   const handleDelete = async (candidateId: number, listId?: number) => {
@@ -421,6 +442,7 @@ export default function HomePage() {
         setSelectedId(null);
         setSelectedCandidateId(null);
         setSelectedResume(null);
+        setSelectedProfile(null);
         setSelectedMatch(null);
         setShowMobileDetail(false);
       }
@@ -443,6 +465,7 @@ export default function HomePage() {
       setSelectedId(null);
       setSelectedCandidateId(null);
       setSelectedResume(null);
+      setSelectedProfile(null);
       setSelectedMatch(null);
       setMatchResults([]);
       setShowMobileDetail(false);
@@ -622,6 +645,7 @@ export default function HomePage() {
                 className="glass w-full scroll-mt-24 rounded-2xl border border-brand-500/20 p-5 shadow-card"
               >
                 <CandidateDetail
+                  key={selectedCandidateId ?? selectedResume?.id ?? "none"}
                   resume={selectedResume}
                   candidateId={selectedCandidateId}
                   profile={selectedProfile}
@@ -659,7 +683,7 @@ export default function HomePage() {
       </main>
 
       <footer className="border-t border-white/5 py-4 text-center text-xs text-slate-600">
-        SliceHRMS AI Recruitment · FastAPI + LangGraph + Next.js
+        Easy AI Recruitment · FastAPI + LangGraph + Next.js
       </footer>
     </div>
   );

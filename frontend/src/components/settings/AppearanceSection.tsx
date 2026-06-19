@@ -33,7 +33,7 @@ export function AppearanceSection() {
       <div>
         <h2 className="font-display text-2xl font-semibold text-white">Appearance</h2>
         <p className="mt-1 max-w-2xl text-sm text-slate-400">
-          Choose how SliceHRMS looks. Dark is the default; your choice is saved in this browser.
+          Choose how Easy AI Recruitment looks. Dark is the default; your choice is saved in this browser.
         </p>
       </div>
 

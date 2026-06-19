@@ -27,6 +27,7 @@ from jd_service import (
     SAMPLE_JOB_DESCRIPTION,
     activate_job_description,
     create_job_description,
+    deactivate_job_description,
     delete_job_description,
     ensure_job_description_row,
     get_job_description,
@@ -743,6 +744,18 @@ async def create_job_posting(
 async def activate_job_posting(job_id: int, db: AsyncSession = Depends(get_db)):
     try:
         return await activate_job_description(db, job_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+
+
+@app.post(
+    "/api/v1/job-descriptions/{job_id}/deactivate",
+    response_model=JobDescriptionPublic,
+    summary="Disable the active job posting (no job will be active for matching)",
+)
+async def deactivate_job_posting(job_id: int, db: AsyncSession = Depends(get_db)):
+    try:
+        return await deactivate_job_description(db, job_id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 

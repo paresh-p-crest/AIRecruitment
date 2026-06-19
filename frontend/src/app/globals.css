@@ -412,6 +412,46 @@ html[data-theme="light"] .shadow-card {
     --tw-ring-color: rgb(110 231 183);
   }
 
+  .app-chart-ring-track {
+    stroke: rgb(255 255 255 / 0.14);
+  }
+
+  html[data-theme="light"] .app-chart-ring-track {
+    stroke: rgb(148 163 184 / 0.55);
+  }
+
+  .app-chart-center-value {
+    @apply text-white;
+  }
+
+  html[data-theme="light"] .app-chart-center-value {
+    @apply text-slate-900;
+  }
+
+  .app-chart-bar-track {
+    @apply bg-white/10;
+  }
+
+  html[data-theme="light"] .app-chart-bar-track {
+    @apply bg-slate-200;
+  }
+
+  .app-chart-legend-label {
+    @apply text-slate-300;
+  }
+
+  html[data-theme="light"] .app-chart-legend-label {
+    @apply text-slate-700;
+  }
+
+  .app-chart-legend-value {
+    @apply text-slate-500;
+  }
+
+  html[data-theme="light"] .app-chart-legend-value {
+    @apply text-slate-600;
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: rgba(148, 163, 184, 0.3) transparent;

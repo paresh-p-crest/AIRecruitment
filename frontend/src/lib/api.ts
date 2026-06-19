@@ -118,12 +118,19 @@ export interface DashboardTopMatch {
   rank: number | null;
 }
 
+export interface DashboardSkillStat {
+  skill: string;
+  candidate_count: number;
+  percent: number;
+}
+
 export interface DashboardSnapshot {
   total_candidates: number;
   matched_candidates: number;
   unmatched_candidates: number;
   avg_match_score: number | null;
   avg_years_experience: number | null;
+  has_active_job: boolean;
   job_description_valid: boolean;
   job_description_has_content: boolean;
   active_job_id: number | null;
@@ -131,6 +138,7 @@ export interface DashboardSnapshot {
   job_posting_count: number;
   file_types: Record<string, number>;
   top_matches: DashboardTopMatch[];
+  top_skills: DashboardSkillStat[];
   doc_extraction_backends: Record<string, boolean>;
   extraction_chunking_enabled: boolean;
   extraction_chunk_threshold: number;
@@ -316,6 +324,10 @@ export interface JobDescriptionListItem {
   updated_at: string | null;
 }
 
+export function isJobMatchableForContext(job: JobDescriptionListItem): boolean {
+  return job.is_valid_for_matching || job.match_count > 0;
+}
+
 export function isJobDescriptionValid(jd: JobDescription): boolean {
   if (jd.is_valid_for_matching) return true;
   const text = jd.raw_text.trim();
@@ -417,7 +429,7 @@ export async function createJobDescription(
     body: JSON.stringify({
       raw_text: rawText,
       title: options?.title ?? undefined,
-      set_as_active: options?.setAsActive ?? true,
+      set_as_active: options?.setAsActive ?? false,
     }),
   });
   return handleResponse<JobDescription>(res);
@@ -425,6 +437,13 @@ export async function createJobDescription(
 
 export async function activateJobDescription(jobId: number): Promise<JobDescription> {
   const res = await fetch(`${API_URL}/api/v1/job-descriptions/${jobId}/activate`, {
+    method: "POST",
+  });
+  return handleResponse<JobDescription>(res);
+}
+
+export async function deactivateJobDescription(jobId: number): Promise<JobDescription> {
+  const res = await fetch(`${API_URL}/api/v1/job-descriptions/${jobId}/deactivate`, {
     method: "POST",
   });
   return handleResponse<JobDescription>(res);
@@ -788,16 +807,6 @@ export interface DuplicateCheckSettings {
 export const DUPLICATE_FIELD_OPTIONS = [
   { id: "email", label: "Email" },
   { id: "phone", label: "Phone" },
-  { id: "linkedin_url", label: "LinkedIn URL" },
-  { id: "first_name", label: "First name" },
-  { id: "last_name", label: "Last name" },
-  { id: "current_location", label: "Location" },
-  { id: "country", label: "Country" },
-  { id: "title", label: "Title" },
-] as const;
-
-export const SECONDARY_DUPLICATE_FIELD_OPTIONS = [
-  { id: "passport_number", label: "Passport number" },
 ] as const;
 
 export async function getDuplicateCheckSettings(): Promise<DuplicateCheckSettings> {

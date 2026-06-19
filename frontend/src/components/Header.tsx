@@ -29,9 +29,9 @@ export function Header({ apiOnline, activeProvider, activeModel }: HeaderProps) 
           </div>
           <div className="min-w-0 text-left">
             <h1 className="font-display text-lg font-semibold tracking-tight text-white sm:text-xl">
-              SliceHRMS
+              Easy AI Recruitment
             </h1>
-            <p className="truncate text-xs text-slate-400 sm:text-sm">AI Recruitment Assistant</p>
+            <p className="truncate text-xs text-slate-400 sm:text-sm">Intelligent Hiring Assistant</p>
           </div>
         </Link>
 

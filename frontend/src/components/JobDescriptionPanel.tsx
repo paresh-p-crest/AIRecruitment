@@ -10,6 +10,7 @@ import {
   Sparkles,
   Star,
   Trash2,
+  XCircle,
 } from "lucide-react";
 import { ActiveJobBanner } from "@/components/ActiveJobBanner";
 import { JobContextSelector } from "@/components/JobContextSelector";
@@ -17,6 +18,7 @@ import { useDialog } from "@/components/DialogProvider";
 import {
   activateJobDescription,
   createJobDescription,
+  deactivateJobDescription,
   deleteJobDescription,
   getJobDescription,
   getJobMatchResults,
@@ -45,6 +47,7 @@ export function JobDescriptionPanel({
   const [saving, setSaving] = useState(false);
   const [creating, setCreating] = useState(false);
   const [activating, setActivating] = useState(false);
+  const [deactivating, setDeactivating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -131,7 +134,7 @@ export function JobDescriptionPanel({
     try {
       const data = await createJobDescription(text, {
         title: title.trim() || undefined,
-        setAsActive: true,
+        setAsActive: false,
       });
       setCurrentJob(data);
       setSelectedJobId(data.id);
@@ -154,7 +157,7 @@ export function JobDescriptionPanel({
     setCreating(true);
     setError(null);
     try {
-      const data = await createJobDescription("", { setAsActive: true });
+      const data = await createJobDescription("", { setAsActive: false });
       setCurrentJob(data);
       setSelectedJobId(data.id);
       setText("");
@@ -162,7 +165,7 @@ export function JobDescriptionPanel({
       setParsed(data.parsed);
       setStoredMatches([]);
       await loadJobs();
-      onJobChanged?.();
+      onSaved?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create job");
     } finally {
@@ -211,6 +214,32 @@ export function JobDescriptionPanel({
     }
   };
 
+  const handleDeactivate = async () => {
+    if (!selectedJobId || !currentJob?.is_active) return;
+    const ok = await confirm({
+      title: "Disable active job?",
+      message:
+        "Matching and dashboard scores will pause until you set another job as active. Candidate records are not affected.",
+      confirmLabel: "Disable active job",
+      variant: "danger",
+    });
+    if (!ok) return;
+
+    setDeactivating(true);
+    setError(null);
+    try {
+      const data = await deactivateJobDescription(selectedJobId);
+      setCurrentJob(data);
+      await loadJob(data.id);
+      await loadJobs();
+      onJobChanged?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to disable active job");
+    } finally {
+      setDeactivating(false);
+    }
+  };
+
   const handleLoadSample = async () => {
     setError(null);
     try {
@@ -250,6 +279,7 @@ export function JobDescriptionPanel({
           selectedJobId={selectedJobId}
           onJobChange={(jobId) => handleSelectJob(jobId)}
           disabled={disabled || loading}
+          matchableOnly={false}
         />
         <button
           type="button"
@@ -290,11 +320,26 @@ export function JobDescriptionPanel({
       )}
 
       {currentJob?.is_active && (
-        <ActiveJobBanner
-          jobId={currentJob.id}
-          jobTitle={currentJob.title}
-          matchCount={currentJob.match_count}
-        />
+        <div className="space-y-3">
+          <ActiveJobBanner
+            jobId={currentJob.id}
+            jobTitle={currentJob.title}
+            matchCount={currentJob.match_count}
+          />
+          <button
+            type="button"
+            onClick={handleDeactivate}
+            disabled={disabled || deactivating || saving || creating}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-200 hover:bg-amber-500/15 disabled:opacity-50"
+          >
+            {deactivating ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <XCircle className="h-3.5 w-3.5" />
+            )}
+            Disable active job
+          </button>
+        </div>
       )}
 
       <label className="flex flex-col gap-1 text-sm text-slate-300">

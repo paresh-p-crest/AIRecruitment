@@ -112,6 +112,7 @@ export function CandidateScoresTable({
           onJobChange={onJobChange}
           disabled={disabled}
           className="mb-4"
+          matchableOnly
         />
       )}
 

@@ -59,12 +59,7 @@ export default function SettingsPage() {
     message: string;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [primaryFields, setPrimaryFields] = useState<string[]>([
-    "email",
-    "phone",
-    "linkedin_url",
-  ]);
-  const [secondaryFields, setSecondaryFields] = useState<string[]>(["passport_number"]);
+  const [primaryFields, setPrimaryFields] = useState<string[]>(["email", "phone"]);
   const [dupSaving, setDupSaving] = useState(false);
   const [dupSaved, setDupSaved] = useState(false);
 
@@ -148,7 +143,6 @@ export default function SettingsPage() {
 
       const dup = await getDuplicateCheckSettings();
       setPrimaryFields(dup.primary_fields);
-      setSecondaryFields(dup.secondary_fields);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to load settings";
       setError(
@@ -187,7 +181,7 @@ export default function SettingsPage() {
     try {
       await saveDuplicateCheckSettings({
         primary_fields: primaryFields,
-        secondary_fields: secondaryFields,
+        secondary_fields: [],
       });
       setDupSaved(true);
     } catch (err) {
@@ -403,12 +397,8 @@ export default function SettingsPage() {
               {section === "duplicate" && !loading && apiOnline && (
                 <DuplicateDetectionSection
                   primaryFields={primaryFields}
-                  secondaryFields={secondaryFields}
                   onTogglePrimary={(field) =>
                     toggleField(field, primaryFields, setPrimaryFields)
-                  }
-                  onToggleSecondary={(field) =>
-                    toggleField(field, secondaryFields, setSecondaryFields)
                   }
                   saving={dupSaving}
                   saved={dupSaved}

@@ -90,10 +90,10 @@ class DuplicateCheckSettings(Base):
     primary_fields: Mapped[list] = mapped_column(
         JSON,
         nullable=False,
-        default=lambda: ["email", "phone", "linkedin_url"],
+        default=lambda: ["email", "phone"],
     )
     secondary_fields: Mapped[list] = mapped_column(
-        JSON, nullable=False, default=lambda: ["passport_number"]
+        JSON, nullable=False, default=lambda: []
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

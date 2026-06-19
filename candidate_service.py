@@ -169,12 +169,31 @@ def enrich_calculated_metrics_from_text(
     return metrics
 
 
+ALLOWED_DUPLICATE_FIELDS = frozenset({"email", "phone"})
+
+
+def _normalize_duplicate_fields(
+    primary_fields: list[str] | None, secondary_fields: list[str] | None
+) -> tuple[list[str], list[str]]:
+    primary = [f for f in (primary_fields or []) if f in ALLOWED_DUPLICATE_FIELDS]
+    if not primary:
+        primary = ["email", "phone"]
+    return primary, []
+
+
 async def ensure_duplicate_settings(db: AsyncSession) -> DuplicateCheckSettings:
     result = await db.execute(
         select(DuplicateCheckSettings).where(DuplicateCheckSettings.id == 1)
     )
     row = result.scalar_one_or_none()
     if row:
+        primary, secondary = _normalize_duplicate_fields(
+            row.primary_fields, row.secondary_fields
+        )
+        if primary != (row.primary_fields or []) or secondary != (row.secondary_fields or []):
+            row.primary_fields = primary
+            row.secondary_fields = secondary
+            await db.flush()
         return row
     row = DuplicateCheckSettings(id=1)
     db.add(row)
@@ -781,15 +800,16 @@ def _candidate_display_name(candidate: Candidate) -> str | None:
 
 
 async def list_candidates(db: AsyncSession, job_id: int | None = None) -> list[dict]:
-    from jd_service import get_active_job_row
+    from jd_service import find_active_job_row
     from models import JobDescription, MatchResult
 
-    if job_id is None:
-        scope_job = await get_active_job_row(db)
-    else:
+    scope_job: JobDescription | None = None
+    if job_id is not None:
         scope_job = await db.get(JobDescription, job_id)
         if not scope_job:
             raise ValueError(f"Job description with id {job_id} not found.")
+    else:
+        scope_job = await find_active_job_row(db)
 
     result = await db.execute(
         select(Candidate)
@@ -799,7 +819,11 @@ async def list_candidates(db: AsyncSession, job_id: int | None = None) -> list[d
     candidates = result.scalars().unique().all()
 
     match_result = await db.execute(
-        select(MatchResult).where(MatchResult.job_description_id == scope_job.id)
+        select(MatchResult).where(
+            MatchResult.job_description_id == scope_job.id
+        )
+        if scope_job
+        else select(MatchResult).where(MatchResult.id == -1)
     )
     matches_by_candidate = {
         m.candidate_id: m for m in match_result.scalars().all() if m.candidate_id
@@ -1173,9 +1197,16 @@ async def delete_by_resume_id(db: AsyncSession, resume_id: int) -> bool:
 
 async def get_duplicate_settings_public(db: AsyncSession) -> dict:
     row = await ensure_duplicate_settings(db)
+    primary, secondary = _normalize_duplicate_fields(
+        row.primary_fields, row.secondary_fields
+    )
+    if primary != (row.primary_fields or []) or secondary != (row.secondary_fields or []):
+        row.primary_fields = primary
+        row.secondary_fields = secondary
+        await db.flush()
     return {
-        "primary_fields": row.primary_fields or ["email", "phone", "linkedin_url"],
-        "secondary_fields": row.secondary_fields or ["passport_number"],
+        "primary_fields": primary,
+        "secondary_fields": secondary,
         "updated_at": row.updated_at,
     }
 
@@ -1184,8 +1215,9 @@ async def update_duplicate_settings(
     db: AsyncSession, primary_fields: list[str], secondary_fields: list[str]
 ) -> dict:
     row = await ensure_duplicate_settings(db)
-    row.primary_fields = primary_fields
-    row.secondary_fields = secondary_fields
+    primary, secondary = _normalize_duplicate_fields(primary_fields, secondary_fields)
+    row.primary_fields = primary
+    row.secondary_fields = secondary
     row.updated_at = datetime.now(timezone.utc)
     await db.flush()
     return await get_duplicate_settings_public(db)

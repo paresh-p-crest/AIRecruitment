@@ -1,18 +1,13 @@
 "use client";
 
 import { CheckCircle2, Copy, Loader2, Save } from "lucide-react";
-import {
-  DUPLICATE_FIELD_OPTIONS,
-  SECONDARY_DUPLICATE_FIELD_OPTIONS,
-} from "@/lib/api";
+import { DUPLICATE_FIELD_OPTIONS } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "./settings-fields";
 
 export interface DuplicateDetectionSectionProps {
   primaryFields: string[];
-  secondaryFields: string[];
   onTogglePrimary: (field: string) => void;
-  onToggleSecondary: (field: string) => void;
   saving: boolean;
   saved: boolean;
   onSave: () => void;
@@ -20,9 +15,7 @@ export interface DuplicateDetectionSectionProps {
 
 export function DuplicateDetectionSection({
   primaryFields,
-  secondaryFields,
   onTogglePrimary,
-  onToggleSecondary,
   saving,
   saved,
   onSave,
@@ -43,13 +36,13 @@ export function DuplicateDetectionSection({
         <SectionHeader icon={Copy} title="Matching rules" />
 
         <p className="mb-6 text-sm text-slate-400">
-          Primary fields trigger duplicate review on upload and warn on profile save. Secondary
-          fields also warn on save (e.g. passport).
+          Email and phone are used to detect the same person during upload and when saving profile
+          changes. At least one field must stay enabled.
         </p>
 
         <div className="mb-6">
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">
-            Primary fields (upload / identity match)
+            Match on
           </p>
           <div className="flex flex-wrap gap-2">
             {DUPLICATE_FIELD_OPTIONS.map((opt) => (
@@ -67,33 +60,6 @@ export function DuplicateDetectionSection({
                   className="sr-only"
                   checked={primaryFields.includes(opt.id)}
                   onChange={() => onTogglePrimary(opt.id)}
-                />
-                {opt.label}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">
-            Secondary fields (warn on save)
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {SECONDARY_DUPLICATE_FIELD_OPTIONS.map((opt) => (
-              <label
-                key={opt.id}
-                className={cn(
-                  "cursor-pointer rounded-lg border px-3 py-1.5 text-sm",
-                  secondaryFields.includes(opt.id)
-                    ? "border-amber-500/40 bg-amber-500/15 text-amber-200"
-                    : "border-white/10 text-slate-400"
-                )}
-              >
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={secondaryFields.includes(opt.id)}
-                  onChange={() => onToggleSecondary(opt.id)}
                 />
                 {opt.label}
               </label>

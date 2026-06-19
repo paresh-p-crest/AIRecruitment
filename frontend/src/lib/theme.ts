@@ -1,6 +1,6 @@
 export type AppTheme = "dark" | "light";
 
-export const THEME_STORAGE_KEY = "slicehrms-theme";
+export const THEME_STORAGE_KEY = "easy-ai-recruitment-theme";
 
 export const DEFAULT_THEME: AppTheme = "dark";
 
@@ -13,7 +13,9 @@ export function readStoredTheme(): AppTheme {
     return DEFAULT_THEME;
   }
   try {
-    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    const stored =
+      window.localStorage.getItem(THEME_STORAGE_KEY) ||
+      window.localStorage.getItem("slicehrms-theme");
     return isAppTheme(stored) ? stored : DEFAULT_THEME;
   } catch {
     return DEFAULT_THEME;

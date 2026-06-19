@@ -154,12 +154,19 @@ class DashboardTopMatch(BaseModel):
     rank: int | None = None
 
 
+class DashboardSkillStat(BaseModel):
+    skill: str
+    candidate_count: int
+    percent: float
+
+
 class DashboardSnapshot(BaseModel):
     total_candidates: int = 0
     matched_candidates: int = 0
     unmatched_candidates: int = 0
     avg_match_score: float | None = None
     avg_years_experience: float | None = None
+    has_active_job: bool = False
     job_description_valid: bool = False
     job_description_has_content: bool = False
     active_job_id: int | None = None
@@ -167,6 +174,7 @@ class DashboardSnapshot(BaseModel):
     job_posting_count: int = 0
     file_types: dict[str, int] = Field(default_factory=dict)
     top_matches: list[DashboardTopMatch] = Field(default_factory=list)
+    top_skills: list[DashboardSkillStat] = Field(default_factory=list)
     doc_extraction_backends: dict[str, bool] = Field(default_factory=dict)
     extraction_chunking_enabled: bool = True
     extraction_chunk_threshold: int = 9000
@@ -253,7 +261,7 @@ class JobDescriptionCreate(BaseModel):
     raw_text: str = Field(default="", description="Full job description text")
     title: str | None = Field(default=None, description="Optional display title")
     set_as_active: bool = Field(
-        default=True,
+        default=False,
         description="When true, this job becomes the active posting for matching",
     )
 
@@ -522,10 +530,8 @@ class DuplicateCheckSettingsPublic(BaseModel):
 
 
 class DuplicateCheckSettingsUpdate(BaseModel):
-    primary_fields: list[str] = Field(
-        default_factory=lambda: ["email", "phone", "linkedin_url"]
-    )
-    secondary_fields: list[str] = Field(default_factory=lambda: ["passport_number"])
+    primary_fields: list[str] = Field(default_factory=lambda: ["email", "phone"])
+    secondary_fields: list[str] = Field(default_factory=list)
 
 
 class ModelPricingEntry(BaseModel):
